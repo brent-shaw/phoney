@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+        <script src="static/js/hid.js"></script>
+
+        <style>
+            html, body {
+                margin: 0;
+                height: 100%;
+            }
+        </style>
+
+        <script>
+            var alpha;
+            var beta;
+            var gamma;
+
+            function init()
+            {
+                var count = 0;
+                socket = io.connect(location.href);
+
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener("deviceorientation", function(event) 
+                    {
+                        alpha = (event.alpha);
+                        beta = (event.beta);
+                        gamma = (event.gamma);
+
+                        var coords = gyro_to_xy(alpha, beta, gamma)
+
+                        json = {mouse: {x: coords['x'], y: coords['y']}};
+                        socket.emit('move event', json);
+                    }, true);
+                    
+                    
+                    
+                } else {
+                alert("No support for Device Orientation");
+                } 
+            };
+        </script>
+    </head>
+    <body onload="init()">
+        <p id="demo"></p>
+    </body>
+</html>

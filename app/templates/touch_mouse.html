@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+        <script src="static/js/hid.js"></script>
+
+        <style>
+            html, body {
+                margin: 0;
+                height: 100%;
+            }
+        </style>
+
+        <script>
+            function init()
+            {
+                var count = 0;
+                socket = io.connect(location.href);
+
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener("touchmove", function(event) 
+                    {
+                        var coords = touch_to_xy(event.clientX, event.clientY);
+                        json = {mouse: {x: coords['x'], y: coords['y']}};
+                        socket.emit('move event', json);
+                    }, true);
+                    
+                    
+                    
+                } else {
+                alert("No support for Device Orientation");
+                } 
+            };
+        </script>
+    </head>
+    <body>
+        <p id="demo"></p>
+    </body>
+</html>
