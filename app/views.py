@@ -4,11 +4,8 @@ from app import app, socketio
 import mouse
 import socket
 import hashlib
-import timeit
 import pyautogui
 import webbrowser
-
-times = []
 
 last_x = 0
 last_y = 0
@@ -56,27 +53,6 @@ def tilt_message(message):
 
 @app.route('/keyboard')
 def keyboard():
-    return render_template("keyboard.html")
-
-@socketio.on('timer_response', namespace='/timer')
-def time(message):
-    global start, end
-    end=timeit.default_timer()
-    emit('timer_request', ' ')
-    times.append(end-start)
-    start=timeit.default_timer()
-
-@app.route('/timer')
-def timer():
-    print("Got page")
-    global start
-    start=timeit.default_timer()
-    return render_template("timer.html")
-
-@app.route('/profile')
-def profile():
-    for t in times:
-        print(t)
     return render_template("keyboard.html")
 
 @app.route('/touch_mouse')
