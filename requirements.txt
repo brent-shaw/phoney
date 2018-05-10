@@ -3,4 +3,5 @@ flask_socketio
 gevent
 gevent_websocket
 mouse
+python3-xlib
 pyautogui
