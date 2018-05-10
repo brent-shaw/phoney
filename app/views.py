@@ -4,9 +4,17 @@ from app import app, socketio
 import mouse
 import socket
 import hashlib
+import timeit
+import pyautogui
+import webbrowser
+
+times = []
 
 last_x = 0
 last_y = 0
+
+start = 0
+emd = 0
 
 def getIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -20,10 +28,13 @@ tempHash.update(hostIP.encode('utf8'))
 siteAddress = '/'
 siteAddress += tempHash.hexdigest()
 
+webbrowser.open('http://localhost:5000', new=0, autoraise=True)
+
 @app.route('/')
 @app.route('/getConnected')
 def getConnected():
     connectAddress = 'http://'+hostIP+':5000'+siteAddress
+    print(connectAddress)
     return render_template("getConnected.html", address=connectAddress)
 
 @app.route(siteAddress)
@@ -43,8 +54,29 @@ def tilt_message(message):
         last_y = y
 
 
-@app.route('/test2')
-def test2():
+@app.route('/keyboard')
+def keyboard():
+    return render_template("keyboard.html")
+
+@socketio.on('timer_response', namespace='/timer')
+def time(message):
+    global start, end
+    end=timeit.default_timer()
+    emit('timer_request', ' ')
+    times.append(end-start)
+    start=timeit.default_timer()
+
+@app.route('/timer')
+def timer():
+    print("Got page")
+    global start
+    start=timeit.default_timer()
+    return render_template("timer.html")
+
+@app.route('/profile')
+def profile():
+    for t in times:
+        print(t)
     return render_template("keyboard.html")
 
 @app.route('/touch_mouse')
@@ -63,3 +95,14 @@ def touch_message(message):
         #mouse.move(x,y)
         last_x = x
         last_y = y
+ 
+
+@app.route('/down')
+def down():
+    pyautogui.typewrite(['down'])
+    return render_template("pres.html")
+
+@app.route('/up')
+def up():
+    pyautogui.typewrite(['up'])
+    return render_template("pres.html")
