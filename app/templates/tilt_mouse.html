@@ -51,13 +51,15 @@
                 {
                     enabled = false;
                     document.getElementById('status').innerHTML = "Disabled";
-                    document.getElementById('controls').style.visibility = "hidden"; 
+                    document.getElementById('controls').style.visibility = "hidden";
+                    document.getElementById('kb').style.visibility = "visible"; 
                 }
                 else
                 {
                     enabled = true;
                     document.getElementById('status').innerHTML = "Enabled";
                     document.getElementById('controls').style.visibility = "visible"; 
+                    document.getElementById('kb').style.visibility = "hidden"; 
                 }
             };
 
@@ -121,10 +123,10 @@
             <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Scripts</a>
+                        <a class="nav-link" href="{{ url_for('down') }}">Scripts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Keyboard</a>
+                        <a class="nav-link" href="{{ url_for('keyboard') }}">Keyboard</a>
                     </li>
                 </ul>
             </div>
