@@ -5,7 +5,7 @@ You can use your phone as a mouse and keyboard, no applications needed.
 
 Run phoney on your PC or laptop and connect to you PC from your phone. Phoney uses websockets to connect your phone to your computer, providing smooth HID movement.
 
-Currently the keyboard functionality uses 'pyautogui'. In future I would like to change this, but for now that is how it is. Unforunately, this means you will need 'python3-xlib'.
+Currently the keyboard functionality uses 'pyautogui'. In future I would like to change this, but for now that is how it is. Unfortunately, this means you will need 'python3-xlib'.
 
 I have added nothing in the way of Windows support so far. Please feel free to do that :)
 
