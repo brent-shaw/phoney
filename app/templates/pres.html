@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+        <script src="static/js/hid.js"></script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+        
+        <style>
+            html, body {
+                margin: 0;
+                height: 100%;
+                background-color: #cccccc;
+            }
+
+            a, p {
+              font-family: Helvetica, Arial, sans-serif;
+              font-size: 100%;
+              color: #222222;
+            }
+
+            .full {
+              text-align: center;
+              margin: auto;
+              background: #cccccc;
+              width: 100%;
+              height: 100%;
+            }
+
+            .center_text {
+              position: absolute;
+              top:  50%;
+              left: 50%;
+              transform: translate(-50%,-50%);
+            }
+        </style>
+
+        <script>
+            var alpha;
+            var beta;
+            var gamma;
+
+            var enabled = true;
+
+            function toggle()
+            {
+                if (enabled)
+                {
+                    enabled = false;
+                    document.getElementById('status').innerHTML = "Disabled";
+                    document.getElementById('controls').style.visibility = "hidden";
+                    document.getElementById('kb').style.visibility = "visible"; 
+                }
+                else
+                {
+                    enabled = true;
+                    document.getElementById('status').innerHTML = "Enabled";
+                    document.getElementById('controls').style.visibility = "visible"; 
+                    document.getElementById('kb').style.visibility = "hidden"; 
+                }
+            };
+
+            function init()
+            {
+                enabled = true;
+                var count = 0;
+                socket = io.connect(location.href);
+
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener("deviceorientation", function(event) 
+                    {
+                        alpha = (event.alpha);
+                        beta = (event.beta);
+                        gamma = (event.gamma);
+
+                        var coords = gyro_to_xy(alpha, beta, gamma)
+
+                        json = {mouse: {x: coords['x'], y: coords['y']}};
+                        if (enabled)
+                        {
+                            socket.emit('move event', json);
+                        }
+                    }, true);
+                    
+                    
+                    
+                } else {
+                alert("No support for Device Orientation");
+                } 
+            };
+        </script>
+        <script>
+            function next()
+            {
+                    location.href = "{{ url_for('down') }}";
+            } 
+        </script>
+        <script>
+            function prev()
+            {
+                    location.href = "{{ url_for('up') }}";
+            } 
+        </script>
+    </head>
+    <body onload="init()">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Touch</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Tilt</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">G</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li> -->
+                </ul>
+            </div>
+            <div class="mx-auto order-0">
+                <a id="status" class="navbar-brand mx-auto"  href="#" onclick="toggle();">Enabled</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('down') }}">Scripts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('keyboard') }}">Keyboard</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="controls" class="full">
+          <div class="center_text">
+            <div class="row" align="center">
+              <div class="col-md-5" align="center">
+                  <button type="button" class="btn btn-primary btn-lg" onclick="prev();">Previous</button>
+              </div>
+              <div class="col-md-2">
+                <div class="row">
+                  <div class="col-md-12">
+                    <!-- <i class="fas fa-arrow-circle-up" style="font-size: 3em"></i> -->
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                      <!-- <i class="fas fa-arrow-circle-down" style="font-size: 3em"></i> -->
+                    </div>
+                </div>
+              </div>
+              <div class="col-md-5" align="center">
+                  <button type="button" class="btn btn-primary btn-lg" onclick="next();">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </body>
+</html>
